@@ -1,0 +1,124 @@
+"--------------------------------------------------------------------------------
+" 默认
+"--------------------------------------------------------------------------------
+source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/mswin.vim
+behave mswin
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+
+"--------------------------------------------------------------------------------
+" 配置多语言环境,解决中文乱码问题
+"--------------------------------------------------------------------------------
+if has("multi_byte") 
+    " UTF-8 编码 
+    set encoding=utf-8 
+    set termencoding=utf-8 
+    set formatoptions+=mM 
+    set fencs=utf-8,gbk 
+    if v:lang =~? '^/(zh/)/|/(ja/)/|/(ko/)' 
+        set ambiwidth=double 
+    endif 
+    if has("win32") 
+        source $VIMRUNTIME/delmenu.vim 
+        source $VIMRUNTIME/menu.vim 
+        language messages zh_CN.utf-8 
+    endif 
+else 
+    echoerr "Sorry, this version of (g)vim was not compiled with +multi_byte" 
+endif
+"--------------------------------------------------------------------------------
+" 配置VIM标准显示
+"--------------------------------------------------------------------------------
+set nu!
+colorscheme desert 
+syntax enable 
+syntax on
+"set lines=35 columns=118 "窗口大小
+set hlsearch        " 高亮显示搜索结果
+set incsearch       " 查询时非常方便，如要查找book单词，当输入到/b时，会自动找到
+autocmd GUIEnter * simalt ~x "窗口最大
+set cursorcolumn
+set cursorline
+"--------------------------------------------------------------------------------
+" 编程相关的设置
+"--------------------------------------------------------------------------------
+"set completeopt=longest,menu    " 关掉智能补全时的预览窗口
+filetype pluginindenton       " 加了这句才可以用智能补全
+set showmatch       " 设置匹配模式，类似当输入一个左括号时会匹配相应的那个右括号
+set smartindent     " 智能对齐方式
+set tabstop=4       "tab对应的长度
+set softtabstop=4   "回退时退回的缩进长度
+set shiftwidth=4    " 换行时行间交错使用4个空格
+set expandtab       "缩进用空格表示
+set noexpandtab     "缩进用制表符表示
+set autoindent      " 自动对齐
+set ai!             " 设置自动缩进
+"--------------------------------------------------------------------------------
+" 开发环境插件
+"--------------------------------------------------------------------------------
+"ctags
+set tags=tags; 
+set autochdir
+"----------------------------------------
+"taglist
+let Tlist_Show_One_File=1 
+let Tlist_Exit_OnlyWindow=1
+"----------------------------------------
+"winmanager
+let g:winManagerWindowLayout='FileExplorer|TagList' 
+nmap <silent> <F8> :WMToggle<cr>
+let g:AutoOpenWinManager = 1  "自动打开
+let g:winManagerWidth=30
+let g:bufExploreMaxHeight=50
+let g:miniBufExplorerMoreThanOne=0
+"----------------------------------------
+"minbufexpl 多文件同窗口打开
+let g:miniBufExplMapCTabSwitchBufs=1 
+let g:miniBufExplMapWindowsNavVim=1 
+let g:miniBufExplMapWindowNavArrows=1
+"----------------------------------------
+"grep
+nnoremap <silent> <F3> :Grep<CR>
+"----------------------------------------
+"a.vim H/C文件切换
+nnoremap <silent> <F12> :A<CR> 
+"----------------------------------------
+"visualmark.vim 书签插件，不需要配置
+"ctrl+F2，添加书签
+"F2,书签正向切换
+"shift+F2,书签反向切换
+"----------------------------------------
+"pydict补全 tab键提示
+filetype plugin on  "启用filetype插件
+let g:pydiction_location = 'D:\Vim\vimfiles\ftplugin\pydiction\complete-dict' "complete-dict文件全路径
+let g:pydiction_menu_height = 20 "设置弹出菜单的高度，默认是15
+"----------------------------------------
