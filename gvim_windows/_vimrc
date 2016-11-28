@@ -34,7 +34,6 @@ function MyDiff()
     let &shellxquote=l:shxq_sav
   endif
 endfunction
-
 "--------------------------------------------------------------------------------
 " 配置多语言环境,解决中文乱码问题
 "--------------------------------------------------------------------------------
@@ -68,6 +67,7 @@ set incsearch       " 查询时非常方便，如要查找book单词，当输入
 autocmd GUIEnter * simalt ~x "窗口最大
 set cursorcolumn
 set cursorline
+set nobackup
 "--------------------------------------------------------------------------------
 " 编程相关的设置
 "--------------------------------------------------------------------------------
@@ -82,43 +82,102 @@ set expandtab       "缩进用空格表示
 set noexpandtab     "缩进用制表符表示
 set autoindent      " 自动对齐
 set ai!             " 设置自动缩进
+"自动补全括号
+inoremap ( ()<ESC>i
+inoremap [ []<ESC>i
+inoremap { {}<ESC>i
+inoremap < <><ESC>i
 "--------------------------------------------------------------------------------
-" 开发环境插件
+" vundle配置
 "--------------------------------------------------------------------------------
-"ctags
+filetype off  "vundle依赖filetype关闭
+" 此处规定Vundle的路径  
+set rtp+=$VIM/vimfiles/bundle/vundle/  
+call vundle#rc('$VIM/vimfiles/bundle/')  
+Bundle 'gmarik/vundle'  
+filetype plugin indent on     " required! 
+"--------------------------------------------------------------------------------
+" 插件安装列表
+"--------------------------------------------------------------------------------
+Bundle 'scrooloose/nerdtree'
+Bundle 'majutsushi/tagbar'
+Bundle 'fholgado/minibufexpl.vim'
+Bundle 'scrooloose/syntastic'
+Bundle 'a.vim'
+Bundle 'grep.vim'
+"Bundle 'Valloric/YouCompleteMe'
+"--------------------------------------------------------------------------------
+" ctags
+"--------------------------------------------------------------------------------
 set tags=tags; 
 set autochdir
-"----------------------------------------
-"taglist
-let Tlist_Show_One_File=1 
-let Tlist_Exit_OnlyWindow=1
-"----------------------------------------
-"winmanager
-let g:winManagerWindowLayout='FileExplorer|TagList' 
-nmap <silent> <F8> :WMToggle<cr>
-let g:AutoOpenWinManager = 1  "自动打开
-let g:winManagerWidth=30
-let g:bufExploreMaxHeight=50
-let g:miniBufExplorerMoreThanOne=0
-"----------------------------------------
-"minbufexpl 多文件同窗口打开
-let g:miniBufExplMapCTabSwitchBufs=1 
-let g:miniBufExplMapWindowsNavVim=1 
-let g:miniBufExplMapWindowNavArrows=1
-"----------------------------------------
+"--------------------------------------------------------------------------------
+" NERDTree
+"--------------------------------------------------------------------------------
+"NERDTree快捷键
+"nmap <F2> :NERDTreeToggle  <CR>
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") &&b:NERDTreeType == "primary") | q | endif
+autocmd vimenter * NERDTree
+" NERDTree.vim
+let g:NERDTreeWinPos="right"
+let g:NERDTreeWinSize=30
+let g:NERDTreeShowLineNumbers=1
+let g:neocomplcache_enable_at_startup = 1
+"--------------------------------------------------------------------------------
+" minibuf
+"--------------------------------------------------------------------------------
+let g:miniBufExplMapWindowNavVim = 1   
+let g:miniBufExplMapWindowNavArrows = 1   
+let g:miniBufExplMapCTabSwitchBufs = 1   
+let g:miniBufExplModSelTarget = 1  
+let g:miniBufExplMoreThanOne=0
+
+nnoremap <C-N> :bn<CR>
+nnoremap <C-P> :bp<CR>
+nnoremap <C-D> :MBEbd<CR>
+"--------------------------------------------------------------------------------
+" tagbar
+"--------------------------------------------------------------------------------
+"nmap <Leader>tb :TagbarToggle<CR>        "快捷键设置
+let g:tagbar_left = 1
+let g:tagbar_ctags_bin='ctags.exe'            "ctags程序的路径
+let g:tagbar_width=30                    "窗口宽度的设置
+map <F3> :Tagbar<CR>
+autocmd BufReadPost *.cpp,*.c,*.h,*.hpp,*.cc,*.cxx,*.py call tagbar#autoopen()     "如果是c语言的程序的话，tagbar自动开启
+"--------------------------------------------------------------------------------
+" grep
+"--------------------------------------------------------------------------------
 "grep
-nnoremap <silent> <F3> :Grep<CR>
-"----------------------------------------
+nnoremap <silent> <F4> :Grep<CR>
+"--------------------------------------------------------------------------------
+" a.vim
+"--------------------------------------------------------------------------------
 "a.vim H/C文件切换
 nnoremap <silent> <F12> :A<CR> 
-"----------------------------------------
-"visualmark.vim 书签插件，不需要配置
-"ctrl+F2，添加书签
-"F2,书签正向切换
-"shift+F2,书签反向切换
-"----------------------------------------
-"pydict补全 tab键提示
-filetype plugin on  "启用filetype插件
-let g:pydiction_location = 'D:\Vim\vimfiles\ftplugin\pydiction\complete-dict' "complete-dict文件全路径
-let g:pydiction_menu_height = 20 "设置弹出菜单的高度，默认是15
-"----------------------------------------
+"--------------------------------------------------------------------------------
+" syntastic
+"--------------------------------------------------------------------------------
+let g:syntastic_error_symbol='>>'
+let g:syntastic_warning_symbol='>'
+let g:syntastic_check_on_open=1
+let g:syntastic_check_on_wq=1
+let g:syntastic_enable_highlighting=1
+let g:syntastic_python_checkers=['pyflakes'] " 使用pyflakes,速度比pylint快
+" 修改高亮的背景色, 适应主题
+highlight SyntasticErrorSign guifg=white guibg=red
+
+" to see error location list
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_loc_list_height = 5
+function! ToggleErrors()
+    let old_last_winnr = winnr('$')
+    lclose
+    if old_last_winnr == winnr('$')
+        " Nothing was closed, open syntastic error location panel
+        Errors
+    endif
+endfunction
+nnoremap <Leader>s :call ToggleErrors()<cr>
+" nnoremap <Leader>sn :lnext<cr>
+" nnoremap <Leader>sp :lprevious<cr>
