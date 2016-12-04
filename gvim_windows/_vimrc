@@ -72,7 +72,7 @@ set nobackup
 " 编程相关的设置
 "--------------------------------------------------------------------------------
 "set completeopt=longest,menu    " 关掉智能补全时的预览窗口
-filetype pluginindenton       " 加了这句才可以用智能补全
+"filetype pluginindenton       " 加了这句才可以用智能补全
 set showmatch       " 设置匹配模式，类似当输入一个左括号时会匹配相应的那个右括号
 set smartindent     " 智能对齐方式
 set tabstop=4       "tab对应的长度
@@ -86,7 +86,6 @@ set ai!             " 设置自动缩进
 inoremap ( ()<ESC>i
 inoremap [ []<ESC>i
 inoremap { {}<ESC>i
-inoremap < <><ESC>i
 "--------------------------------------------------------------------------------
 " vundle配置
 "--------------------------------------------------------------------------------
@@ -104,8 +103,14 @@ Bundle 'majutsushi/tagbar'
 Bundle 'fholgado/minibufexpl.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'a.vim'
+Bundle 'c.vim'
 Bundle 'grep.vim'
-"Bundle 'Valloric/YouCompleteMe'
+Bundle 'shougo/neocomplete'
+Bundle 'kien/ctrlp.vim'
+Bundle 'SuperTab'
+Bundle 'davidhalter/jedi-vim'
+Bundle 'cscope.vim'
+Bundle 'chazy/cscope_maps'
 "--------------------------------------------------------------------------------
 " ctags
 "--------------------------------------------------------------------------------
@@ -181,3 +186,13 @@ endfunction
 nnoremap <Leader>s :call ToggleErrors()<cr>
 " nnoremap <Leader>sn :lnext<cr>
 " nnoremap <Leader>sp :lprevious<cr>
+"--------------------------------------------------------------------------------
+" neocomplete
+"--------------------------------------------------------------------------------
+
+"--------------------------------------------------------------------------------
+" jedi-vim
+"--------------------------------------------------------------------------------
+let g:jedi#use_tabs_not_buffers = 1
+let g:jedi#use_splits_not_buffers = "bottom"
+let g:jedi#show_call_signatures = "1"
