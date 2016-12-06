@@ -109,7 +109,6 @@ Bundle 'shougo/neocomplete'
 Bundle 'kien/ctrlp.vim'
 Bundle 'SuperTab'
 Bundle 'davidhalter/jedi-vim'
-Bundle 'cscope.vim'
 Bundle 'chazy/cscope_maps'
 "--------------------------------------------------------------------------------
 " ctags
@@ -278,3 +277,19 @@ endif
 " For perlomni.vim setting.
 " https://github.com/c9s/perlomni.vim
 let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+"--------------------------------------------------------------------------------
+" 常用快捷键设置
+"--------------------------------------------------------------------------------
+let mapleader=","
+nmap <leader>p :!python %<CR>
+nnoremap <silent> <leader>c :!dir /s /b *.py > cscope.files<CR>
+"nmap <leader> <leader>c :!find . -name '*.py' >cscope.files<CR>
+nnoremap <silent> <leader>s :!cscope -bk<CR>
+nnoremap <silent> <leader>a :cs add cscope.out<CR>
+nnoremap <silent> <leader>t :!ctags -R<CR>
+"按,ev打开配置文件
+nmap <silent> <leader>ev :e $MYVIMRC<CR>
+"按,sv重载配置文件
+nmap <silent> <leader>sv :so $MYVIMRC<CR>
+"按,w保存文件
+nmap <leader>w :w<CR>
